@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <canvas id="mycanvas"></canvas>
+
+</body>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js'></script>
+<script>
+  //抓取canvas
+  var canvas = document.getElementById("mycanvas")
+  var ctx = canvas.getContext("2d")
+
+  //設定寬高滿版
+  ww = canvas.width = window.innerWidth
+  wh = canvas.height = window.innerHeight
+
+  window.addEventListener("resize", function () {
+    //設定寬高滿版
+    ww = canvas.width = window.innerWidth
+    wh = canvas.height = window.innerHeight
+  })
+
+  //定義球的類別
+  var Ball = function () {
+    this.p = { //初始化位置
+      x: ww / 2,
+      y: wh / 2
+    }
+    this.v = { //初始化速度
+      x: 5,
+      y: 0
+    }
+    this.a = { //初始化加速度
+      x: 0,
+      y: 0.6
+    }
+    this.r = 50 //球的半徑
+    this.dragging = false //拖動狀態
+  }
+  //繪製這顆球
+  Ball.prototype.draw = function () {
+    ctx.beginPath()
+    ctx.save()
+    ctx.translate(this.p.x, this.p.y)
+    ctx.arc(0, 0, this.r, 0, Math.PI * 2)
+    ctx.fillStyle = controls.color
+    ctx.fill()
+    ctx.restore()
+  }
+  //繪製球的速度線
+  Ball.prototype.drawV = function () {
+    ctx.beginPath()
+    ctx.save()
+    ctx.translate(this.p.x, this.p.y)
+    ctx.scale(3, 3)
+    ctx.moveTo(0, 0)
+    ctx.lineTo(this.v.x, this.v.y)
+    ctx.strokeStyle = "blue"
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(this.v.x, 0)
+    ctx.strokeStyle = "red"
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(0, this.v.y)
+    ctx.strokeStyle = "green"
+    ctx.stroke()
+    ctx.restore()
+  }
+  //更新球的位置
+  Ball.prototype.update = function () {
+    //更新位置
+    this.p.x += this.v.x
+    this.p.y += this.v.y
+    //更新速度
+    this.v.x += this.a.x
+    this.v.y += this.a.y
+    //速度的摩擦力
+    this.v.x *= controls.fade
+    this.v.y *= controls.fade
+    //檢查邊界碰撞
+    this.checkBoundary()
+
+    //把最新的數值更新到控制器上
+    controls.vx = this.v.x
+    controls.vy = this.v.y
+    controls.ay = this.a.y
+    controls.updateDisplay()
+  }
+  //檢查邊界碰撞
+  Ball.prototype.checkBoundary = function () {
+    if (this.p.x + this.r > ww) {
+      this.v.x = -Math.abs(this.v.x)
+    }
+    if (this.p.x - this.r < 0) {
+      this.v.x = Math.abs(this.v.x)
+    }
+    if (this.p.y + this.r > wh) {
+      this.v.y = -Math.abs(this.v.y)
+    }
+    if (this.p.y - this.r < 0) {
+      this.v.y = Math.abs(this.v.y)
+    }
+  }
+
+
+
+  //設定控制項
+  var controls = {
+    vx: 0,
+    vy: 0,
+    ay: 0.6,
+    fade: 0.99,
+    update: true,
+    color: "#fff",
+    step: function () { ball.update() },
+    FPS: 30
+  }
+  //初始化控制介面
+  var gui = new dat.GUI()
+  //listen 雙向監聽變動，onchange 掛載變動事件
+  gui.add(controls, "vx", -50, 50).listen().onChange(function (value) {
+    ball.v.x = value
+  })
+  gui.add(controls, "vy", -50, 50).listen().onChange(function (value) {
+    ball.v.y = value
+  })
+  gui.add(controls, "ay", -1, 1).step(0.1).listen().onChange(function (value) {
+    ball.a.y = value
+  })
+  gui.add(controls, "fade", 0, 1).step(0.01).listen()
+  gui.add(controls, "update")
+  gui.addColor(controls, "color")
+  gui.add(controls, "step")
+  gui.add(controls, "FPS", 1, 120)
+
+
+
+  //新增一顆球
+  var ball;
+  //初始化
+  function init() {
+    ball = new Ball()
+  }
+  init()
+
+  //固定時間的更新
+  function update() {
+    if (controls.update) {
+      if (!ball.dragging) {
+        ball.update()
+      }
+    }
+  }
+  setInterval(update, 30)
+
+  //繪製
+  function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.5)"
+    ctx.fillRect(0, 0, ww, wh)
+    ctx.save()
+    // y 加速度
+    ctx.translate(50, wh / 2)
+    ctx.beginPath()
+    ctx.moveTo(0, 0)
+    ctx.lineTo(0, ball.a.y * 100)
+    ctx.strokeStyle = "#ff2200"
+    ctx.stroke()
+    ctx.fillStyle = "white"
+    ctx.fillText(ball.a.y, 5, 0)
+    ctx.beginPath()
+    ctx.arc(0, 0, 5, 0, Math.PI * 2)
+    ctx.fillStyle = "#ff2200"
+    ctx.fill()
+    ctx.restore()
+    ball.draw()
+    ball.drawV()
+    setTimeout(draw, 1000 / controls.FPS)
+  }
+  draw()
+
+
+
+
+
+  let mousePos = { x: 0, y: 0 }
+
+  //取得兩點距離
+  function getDistance(p1, p2) {
+    let temp1 = p1.x - p2.x
+    let temp2 = p1.y - p2.y
+    let dist = Math.pow(temp1, 2) + Math.pow(temp2, 2)
+    return Math.sqrt(dist)
+  }
+
+  canvas.addEventListener("mousedown", function (evt) {
+    mousePos = { x: evt.x, y: evt.y }
+    let dist = getDistance(ball.p, mousePos)
+    //如果點下時在球上，就設定dragging=true
+    if (dist < ball.r) {
+      console.log("click on ball!")
+      ball.dragging = true
+    }
+  })
+  canvas.addEventListener("mousemove", function (evt) {
+    let nowPos = { x: evt.x, y: evt.y }
+    if (ball.dragging) {
+      //滑鼠跟前個位置的變化量
+      let dx = nowPos.x - mousePos.x
+      let dy = nowPos.y - mousePos.y
+      //球的位置新增變化量
+      ball.p.x += dx
+      ball.p.y += dy
+      //球的速度為最後變化的量
+      ball.v.x = dx
+      ball.v.y = dy
+    }
+
+    //如果移動時滑鼠在球上，提示可以按
+    let dist = getDistance(ball.p, mousePos)
+    if (dist < ball.r) {
+      canvas.style.cursor = "move"
+    } else {
+      canvas.style.cursor = "initial"
+    }
+
+    //更新滑鼠位置
+    mousePos = { x: evt.x, y: evt.y }
+
+  });
+  //滑鼠放開
+  canvas.addEventListener("mouseup", function (evt) {
+    ball.dragging = false
+    canvas.style.cursor = "initial"
+  })
+
+
+
+
+</script>
+
+</html>
