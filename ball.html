@@ -101,7 +101,7 @@
   //檢查邊界碰撞
   Ball.prototype.checkBoundary = function () {
     if (this.p.x + this.r > ww) {
-      this.v.x = -Math.abs(this.v.x)
+      this.v.x = -Math.abs(this.v.x) //abs為取絕對值
     }
     if (this.p.x - this.r < 0) {
       this.v.x = Math.abs(this.v.x)
@@ -151,7 +151,7 @@
   var ball;
   //初始化
   function init() {
-    ball = new Ball()
+    ball = new Ball() //根據球的類別新增一顆球
   }
   init()
 
