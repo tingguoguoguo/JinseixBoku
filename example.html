@@ -62,7 +62,7 @@
   }).listen()
 
   gui.add(controls, "fadeRate", 0.8, 1).step(0.001).onChange(function (value) {
-  }).listen()
+  }).listen() //listen()可以讓gui監聽到controls的變化
   gui.add(controls, "play1x")
   gui.add(controls, "play2x")
   //------------------------
@@ -126,10 +126,10 @@
         p: new Vec2(0, 0),
         angle: 0,
         dragging: false,
-        angleSpeed: 2,
+        angleSpeed: 2, //初始速度
       }
-      Object.assign(def, args)
-      Object.assign(this, def)
+      Object.assign(def, args) //把args的東西放進def(合併物件)
+      Object.assign(this, def) //把def的東西放進this
     }
     draw() {
       ctx.save()
@@ -149,20 +149,20 @@
 
       }
       //底色+陰影
-      ctx.shadowBlur = 100
-      ctx.shadowColor = "rgba(0,0,0,0.3)"
-      circle(this.p, this.r, "black")
-      ctx.shadowBlur = 0
+      ctx.shadowBlur = 100 //陰影模糊
+      ctx.shadowColor = "rgba(0,0,0,0.3)" //陰影顏色
+      circle(this.p, this.r, "black") //繪製黑色大圓形
+      ctx.shadowBlur = 0 //把陰影歸0，避免影響到後面的繪製
 
       //中間的紅圈跟黑圈
       circle(this.p, 150, "#e51919")
       circle(this.p, 40, "black")
 
       //畫上圖片
-      let img = $("img")
-      ctx.globalCompositeOperation = "color-burn"
+      let img = $("img") //抓取html中的img
+      ctx.globalCompositeOperation = "color-burn" //圖層疊合模式
       ctx.drawImage(img[0], -this.r * 0.85, -160)
-      ctx.globalCompositeOperation = "source-over"
+      ctx.globalCompositeOperation = "source-over" //取消圖層疊合模式，避免影響到後面的繪製
 
       //金色線條
       ctx.lineWidth = 10
@@ -170,20 +170,20 @@
       circle(this.p, 15, "#ddd")
       ctx.lineWidth = 1
 
-      //網格
+      //網格，白色線條
       for (var i = 0; i < 40; i++) {
-        circle(this.p, i * this.r / 40, null, `rgba(255,255,255,${(i % 5) / 20})`)
+        circle(this.p, i * this.r / 40, null, `rgba(255,255,255,${(i % 5) / 20})`) //每5條深一點，其他淺一點
       }
 
       circle(this.p, 160, null, "white")
 
-      // 速度線
+      // 唱片旋轉時的速度線
       for (var i = 0; i < 10; i++) {
         ctx.beginPath()
-        let start_angle = i
+        let start_angle = i //開始角度
         let end_angle = i + Math.PI / 2 * this.angleSpeed * 0.5
-        ctx.arc(this.p.x, this.p.y, this.r * i / 10, start_angle, end_angle)
-        let opacity = Math.abs(this.angleSpeed) * i / 20 + 0.1
+        ctx.arc(this.p.x, this.p.y, this.r * i / 10, start_angle, end_angle) //繪製圓弧
+        let opacity = Math.abs(this.angleSpeed) * i / 20 + 0.1 //希望越慢的時候，線條越淡
         //中間圓白線條
         ctx.lineWidth = 1
         ctx.strokeStyle = `rgba(255,255,255,${opacity})`
@@ -195,8 +195,8 @@
     }
     update() {
       //唱盤速度
-      this.angleSpeed *= controls.fadeRate
-      this.angle += this.angleSpeed
+      this.angleSpeed *= controls.fadeRate //乘上摩擦力，讓速度慢慢減少
+      this.angle += this.angleSpeed //角度加上轉動速度(角速度)
 
       //如果在唱盤上，滑鼠變可點案
       if (mousePos.sub(new Vec2(ww / 2, wh / 2)).length < this.r) {
@@ -238,45 +238,45 @@
     //CD長大
     TweenMax.to(cd, 2, { r: Math.min(ww, wh) * 0.45 })
   }
-  let player = document.getElementById('musicBg')
+  let player = document.getElementById('musicBg') //抓取音樂
   // player.pause()
   // player.play()
 
   function update() {
     time++
-    cd.update()
+    cd.update() //執行CD的更新
 
     //如果滑鼠有被按下
     if (mousePosDown) {
-      //如果有上一個按下時的角度
+      //如果沒有上一個按下時的角度
       if (!cd.lastAngle) {
-        cd.lastAngle = cd.angle
+        cd.lastAngle = cd.angle //紀錄按下的角度
       }
       cd.dragging = true
 
       //算出拖曳變動的角度
       let delta = mousePos.sub(new Vec2(ww / 2, wh / 2)).angle - mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
       cd.angle = cd.lastAngle + delta
-      cd.angleSpeed = delta
+      cd.angleSpeed = delta //現在的角速度為變化量
     } else {
-      //放開時清除上次按下的角度
+      //放開時清除上次按下的角度，才能再次進入if (!cd.lastAngle) 去判斷
       cd.dragging = false
       cd.lastAngle = null
     }
 
     //音樂播放速度控制
     var cur = cd.angleSpeed
-    let volume = Math.sqrt(Math.abs(cd.angleSpeed))
-    if (volume > 1) volume = 1
-    if (cd.angleSpeed > 0 && cur < 0.1) {
+    let volume = Math.sqrt(Math.abs(cd.angleSpeed)) //音量取絕對值後開根號
+    if (volume > 1) volume = 1 //避免音量超過1爆音
+    if (cd.angleSpeed > 0 && cur < 0.1) { //判斷不合理的範圍(如果角速度大於0，且現在的速度小於0.1)
       cur = 0.1
     }
     if (cd.angleSpeed < 0 && cur > -1) {
       cur = -1
     }
-    player.volume = volume
+    player.volume = volume //音量 = volume，轉動慢時音量小
     if (cur > 0) {
-      player.playbackRate = cur
+      player.playbackRate = cur //播放速度 = cur
 
     }
   }
@@ -292,7 +292,7 @@
     //   在這裡繪製
 
     ctx.save()
-    ctx.translate(ww / 2, wh / 2)
+    ctx.translate(ww / 2, wh / 2) //移動座標到中心
     cd.draw()
     ctx.restore()
 
@@ -332,7 +332,7 @@
 
   //滑鼠事件跟紀錄
   var mousePos = new Vec2(0, 0)
-  var mousePosDown = null
+  var mousePosDown = null //避免被記錄到拖曳的判斷式，所以先設定為null
   var mousePosUp = null
 
   window.addEventListener("mousemove", mousemove)
