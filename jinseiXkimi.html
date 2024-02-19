@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <!-- google font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Aclonica&family=Sedgwick+Ave+Display&display=swap"
@@ -149,7 +150,7 @@
       user-select: none;
     }
 
-    p {
+    .text {
       margin: 4px;
       color: rgb(255, 255, 255);
       font-size: 80px;
@@ -232,6 +233,65 @@
         transform: translate(-15%, -50%) rotate(-88deg);
       }
     }
+
+    #playlist {
+      font-family: 'Aclonica', sans-serif;
+      display: flex;
+      flex-direction: column;
+      background-color: #f8f8f8;
+      border-radius: 8px;
+      /* margin-bottom: 20px; */
+      float: left;
+      width: 20%;
+
+      :hover {
+        border-radius: 8px;
+        background-color: #cdcbcb;
+        cursor: pointer;
+      }
+    }
+
+    #playlist div {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #playlist div:last-child {
+      border-bottom: none;
+    }
+
+    #playlist p {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    #player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #cd4a4a;
+      padding: 12px;
+      border-radius: 10px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+    }
+
+    #player__info {
+      font-family: 'Aclonica', sans-serif;
+      margin-bottom: 8px;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    #player__control {
+      display: flex;
+      justify-content: space-between;
+      width: 200px;
+    }
   </style>
 </head>
 
@@ -244,7 +304,7 @@
     <div class="eye__ball">
       <canvas id="canvas"></canvas>
       <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
-      <audio src='./ONE OK ROCK - Clock Strikes Piano Cover By OOR paino (256 kbps).mp3' loop></audio>
+      <audio src='./music/01-Clock Strikes.mp3' loop></audio>
     </div>
 
     <!-- 眼眶區域 -->
@@ -265,8 +325,37 @@
     <p class="text">ock Strikes</p>
   </div>
 
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js'></script>
-  <script src="./js/cd.js"></script>
+  <!-- vue 建立playlist & player -->
+  <div id="app">
+
+    <div id="playlist">
+      <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)">
+        <p>{{song.name}}</p>
+      </div>
+    </div>
+
+    <div id="player">
+      <div id="player__info">
+        <p>{{currentSong.name}}</p>
+      </div>
+      <div id="player__control">
+
+        <div id="player__control__prev" @click="prevMusic">
+          上一首
+        </div>
+        <div id="player__control__play" @click="playMusic">
+          播放
+        </div>
+        <div id="player__control__next" @click="nextMusic">
+          下一首
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js'></script> <!-- dat.gui -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.global.min.js'></script> <!-- vue -->
+  <script src="./js/cd.js"></script> <!-- 唱盤互動.js -->
   <script>
     const eye = document.querySelector(".eye")
     const eyeLid = document.querySelector(".eye__lid")
@@ -288,7 +377,55 @@
     //   eyeBall.style.bottom = '-50px'
 
     // })
+
     // vue-----------------------------------------------------------------
+    const { createApp } = Vue
+
+    const app = createApp({
+      data() {
+        return {
+          songs: [{
+            name: "01-Clock Strikes",
+            artist: "ONE OK ROCK",
+            src: "./music/01-Clock Strikes.mp3"
+          },
+          {
+            name: "02-Nothing Helps",
+            artist: "ONE OK ROCK",
+            src: "./music/02-Nothing helps.mp3"
+          }
+          ],
+          currentSong: {},
+          audio: new Audio()
+        }
+      },
+      methods: {
+        playMusic(index) {
+          if (index !== undefined) {
+            this.currentSong = this.songs[index]
+            this.audio.src = this.currentSong.src
+            this.audio.play()
+          } else {
+            if (this.audio.paused) {
+              this.audio.play()
+            } else {
+              this.audio.pause()
+            }
+          }
+        },
+        prevMusic() {
+          let index = this.songs.findIndex(song => song === this.currentSong)
+          index = (index - 1 + this.songs.length) % this.songs.length
+          this.playMusic(index)
+        },
+        nextMusic() {
+          let index = this.songs.findIndex(song => song === this.currentSong)
+          index = (index + 1) % this.songs.length
+          this.playMusic(index)
+        }
+      },
+    }).mount('#app')
+
   </script>
 </body>
 
