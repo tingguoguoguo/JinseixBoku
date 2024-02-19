@@ -225,6 +225,8 @@
     } else {
       cdArea.style.cursor = 'initial'
     }
+    console.log(mousePos.sub(new Vec2(ww / 2, wh / 2)).length, cdArea, cd.r)
+
     let cur = Math.abs(cd.angleSpeed)
     let volume = Math.sqrt(Math.abs(cd.angleSpeed)) / 3
     volume > 1 ? 1 : volume
