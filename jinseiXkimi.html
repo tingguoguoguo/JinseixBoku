@@ -182,6 +182,7 @@
       font-size: 56px;
       color: rgb(255, 255, 255);
       user-select: none;
+      z-index: -1;
     }
 
     #canvas:hover {
@@ -280,6 +281,35 @@
       display: flex;
       justify-content: space-between;
       width: 580px;
+      margin-bottom: 32px;
+    }
+
+    #player__knob {
+      width: 680px;
+      height: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 50px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+      background: #e0e0e0;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #d33636;
+      cursor: pointer;
+      /* box-shadow: -100vw 0 0 100vw #d33636; */
     }
   </style>
 </head>
@@ -328,7 +358,8 @@
       <div id="player__info">
         <p>{{currentSong.name}}</p>
       </div>
-      <progress id="player__progress" max="100" :value="progress"></progress>
+      <!-- <progress id="player__progress" max="100" :value="progress"></progress> -->
+      <input type="range" id="player__knob" :value="progress" @input="seekMusic" step="0.01">
       <div id="player__control">
         <div id="player__control__prev" @click="prevMusic">
           <i class="fa-solid fa-backward-fast"></i>
@@ -360,14 +391,6 @@
       eyeBall.style.bottom = '150px'
 
     })
-
-    // eye.addEventListener("mouseleave", () => {
-    //   eyeLid.style.transform = 'translate(-50%, -50%)'
-    //   eyeLidmask.style.opacity = '1'
-    //   eyeBall.style.opacity = '0'
-    //   eyeBall.style.bottom = '-50px'
-
-    // })
 
     // vue-----------------------------------------------------------------
     const { createApp, ref, reactive, onMounted } = Vue;
@@ -422,7 +445,6 @@
         let currentIndex = ref(undefined);
 
         const playMusic = (index) => {
-          console.log(index);
           // 如果 index 為 undefined 或者 index 不等於 currentIndex.value，則播放歌曲
           if (index === undefined || index !== currentIndex.value) {
             currentIndex.value = index !== undefined ? index : 0; // 如果 index 為 undefined，播放第一首歌
@@ -444,6 +466,11 @@
 
         const updateProgress = () => {
           progress.value = (audio.currentTime / audio.duration) * 100;
+        };
+
+        const seekMusic = (e) => {
+          audio.currentTime = (e.target.value / 100) * audio.duration;
+          progress.value = e.target.value;
         };
 
         audio.addEventListener('ended', () => {
@@ -472,7 +499,8 @@
           playMusic,
           prevMusic,
           nextMusic,
-          updateProgress
+          updateProgress,
+          seekMusic
         };
       }
     }).mount('#app');
