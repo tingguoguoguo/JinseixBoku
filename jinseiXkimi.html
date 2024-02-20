@@ -8,8 +8,12 @@
   <!-- google font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Aclonica&family=Sedgwick+Ave+Display&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Patua+One&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patua+One&family=Shippori+Antique&display=swap" rel="stylesheet">
+  <!-- font awesome -->
+  <link rel="stylesheet" href="./css/all.css">
   <style>
     *,
     *:before,
@@ -25,7 +29,7 @@
 
     .eye {
       position: absolute;
-      top: 50%;
+      top: 42%;
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
@@ -95,40 +99,6 @@
 
     }
 
-    .eye__hair {
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      transform: translate(-50%, -50%);
-      width: 40px;
-      height: 100px;
-      background: rgb(255, 255, 255);
-    }
-
-    .eye__hair:before {
-      content: "";
-      position: absolute;
-      left: -760%;
-      top: -60%;
-      width: 40px;
-      height: 110px;
-      background: rgb(255, 255, 255);
-      transform: rotate(40deg);
-
-    }
-
-    .eye__hair:after {
-      content: "";
-      position: absolute;
-      right: -760%;
-      top: -60%;
-      width: 40px;
-      height: 110px;
-      background: rgb(255, 255, 255);
-      transform: rotate(-40deg);
-
-    }
-
     .eye__lid__mask {
       position: absolute;
       width: 100%;
@@ -139,12 +109,12 @@
 
     }
 
-    #clock__strikes {
+    #oneoclock {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-left: 12px;
-      margin-top: 48px;
+      margin-left: 16px;
+      margin-top: 28px;
       width: 550px;
       height: 200px;
       user-select: none;
@@ -154,7 +124,7 @@
       margin: 4px;
       color: rgb(255, 255, 255);
       font-size: 80px;
-      font-family: 'Sedgwick Ave Display', cursive;
+      font-family: 'Patua One', serif;
 
     }
 
@@ -204,6 +174,16 @@
       animation: l-before 1s ease infinite alternate;
     }
 
+    #album {
+      position: absolute;
+      top: 110px;
+      margin-left: 16px;
+      font-family: "Shippori Antique", sans-serif;
+      font-size: 56px;
+      color: rgb(255, 255, 255);
+      user-select: none;
+    }
+
     #canvas:hover {
       cursor: pointer;
     }
@@ -234,15 +214,18 @@
       }
     }
 
+    /* 播放清單 & 播放器 */
     #playlist {
-      font-family: 'Aclonica', sans-serif;
+      font-family: "Patua One", serif;
       display: flex;
       flex-direction: column;
       background-color: #f8f8f8;
       border-radius: 8px;
-      /* margin-bottom: 20px; */
+      margin-top: 32px;
+      margin-left: 16px;
       float: left;
       width: 20%;
+      user-select: none;
 
       :hover {
         border-radius: 8px;
@@ -270,27 +253,33 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: #cd4a4a;
-      padding: 12px;
-      border-radius: 10px;
+      color: #ffffff;
+      width: 100%;
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 180px;
+      bottom: 16px;
+      height: 200px;
+      user-select: none;
+    }
+
+    #player i {
+      font-size: 48px;
+      cursor: pointer;
+    }
+
+    #player i:hover {
+      color: #d33636;
     }
 
     #player__info {
-      font-family: 'Aclonica', sans-serif;
-      margin-bottom: 8px;
-      font-size: 36px;
+      font-family: "Patua One", serif;
+      font-size: 40px;
       font-weight: bold;
     }
 
     #player__control {
       display: flex;
       justify-content: space-between;
-      width: 200px;
+      width: 580px;
     }
   </style>
 </head>
@@ -311,23 +300,24 @@
     <div class=" eye__lid">
       <div class="eye__lid__mask"></div>
       <div class="eye__lashes"></div>
-      <div class="eye__hair"></div>
     </div>
 
   </div>
 
-  <!-- clock strikes -->
-  <div id="clock__strikes">
-    <p class="text">C</p>
+  <!-- one o'clock -->
+  <div id="oneoclock">
+    <p class="text">ONE O'C</p>
     <div class="l">
       <span></span>
     </div>
-    <p class="text">ock Strikes</p>
+    <p class="text">OCK</p>
+  </div>
+  <div id="album">
+    <p>人生 x 僕 ═ </p>
   </div>
 
   <!-- vue 建立playlist & player -->
   <div id="app">
-
     <div id="playlist">
       <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)">
         <p>{{song.name}}</p>
@@ -338,16 +328,17 @@
       <div id="player__info">
         <p>{{currentSong.name}}</p>
       </div>
+      <progress id="player__progress" max="100" :value="progress"></progress>
       <div id="player__control">
-
         <div id="player__control__prev" @click="prevMusic">
-          上一首
+          <i class="fa-solid fa-backward-fast"></i>
         </div>
-        <div id="player__control__play" @click="playMusic">
-          播放
+        <div id="player__control__play" @click="playMusic(currentIndex)">
+          <i class="fa-solid fa-play" v-if="!isPlaying"></i>
+          <i class="fa-solid fa-pause" v-else></i>
         </div>
         <div id="player__control__next" @click="nextMusic">
-          下一首
+          <i class="fa-solid fa-forward-fast"></i>
         </div>
       </div>
     </div>
@@ -379,52 +370,112 @@
     // })
 
     // vue-----------------------------------------------------------------
-    const { createApp } = Vue
+    const { createApp, ref, reactive, onMounted } = Vue;
 
     const app = createApp({
-      data() {
-        return {
-          songs: [{
+      setup() {
+        const songs = ref([
+          {
             name: "01-Clock Strikes",
-            artist: "ONE OK ROCK",
             src: "./music/01-Clock Strikes.mp3"
           },
           {
             name: "02-Nothing Helps",
-            artist: "ONE OK ROCK",
             src: "./music/02-Nothing helps.mp3"
+          },
+          {
+            name: "03-The Same As...",
+            src: "./music/03-the same as....mp3"
+          },
+          {
+            name: "04-Smiling Down",
+            src: "./music/04-Smiling down.mp3"
+          },
+          {
+            name: "05-Ending Story??",
+            src: "./music/05-Ending Story.mp3"
+          },
+          {
+            name: "06-The Beginning",
+            src: "./music/06-The Beginning.mp3"
+          },
+          {
+            name: "07-ONION!",
+            src: "./music/07-ONION!.mp3"
+          },
+          {
+            name: "08-Be The Light",
+            src: "./music/08-Be the Light.mp3"
+          }, {
+            name: "09-Deeper Deeper",
+            src: "./music/09-Deeper Deeper.mp3"
+          }, {
+            name: "10-All Mine",
+            src: "./music/10-All Mine.mp3"
           }
-          ],
-          currentSong: {},
-          audio: new Audio()
-        }
-      },
-      methods: {
-        playMusic(index) {
-          if (index !== undefined) {
-            this.currentSong = this.songs[index]
-            this.audio.src = this.currentSong.src
-            this.audio.play()
+        ]);
+
+        const currentSong = ref(songs.value[0]);
+        const audio = new Audio();
+        const isPlaying = ref(false);
+        const progress = ref(0);
+        let currentIndex = ref(undefined);
+
+        const playMusic = (index) => {
+          console.log(index);
+          // 如果 index 為 undefined 或者 index 不等於 currentIndex.value，則播放歌曲
+          if (index === undefined || index !== currentIndex.value) {
+            currentIndex.value = index !== undefined ? index : 0; // 如果 index 為 undefined，播放第一首歌
+            currentSong.value = songs.value[currentIndex.value];
+            audio.src = currentSong.value.src;
+            audio.play();
+            isPlaying.value = true;
+            audio.addEventListener('timeupdate', updateProgress);
           } else {
-            if (this.audio.paused) {
-              this.audio.play()
+            if (audio.paused) {
+              audio.play();
+              isPlaying.value = true;
             } else {
-              this.audio.pause()
+              audio.pause();
+              isPlaying.value = false;
             }
           }
-        },
-        prevMusic() {
-          let index = this.songs.findIndex(song => song === this.currentSong)
-          index = (index - 1 + this.songs.length) % this.songs.length
-          this.playMusic(index)
-        },
-        nextMusic() {
-          let index = this.songs.findIndex(song => song === this.currentSong)
-          index = (index + 1) % this.songs.length
-          this.playMusic(index)
         }
-      },
-    }).mount('#app')
+
+        const updateProgress = () => {
+          progress.value = (audio.currentTime / audio.duration) * 100;
+        };
+
+        audio.addEventListener('ended', () => {
+          audio.removeEventListener('timeupdate', updateProgress);
+        });
+
+        const prevMusic = () => {
+          let index = songs.value.findIndex(song => song === currentSong.value);
+          index = (index - 1 + songs.value.length) % songs.value.length;
+          playMusic(index);
+        };
+
+        const nextMusic = () => {
+          let index = songs.value.findIndex(song => song === currentSong.value);
+          index = (index + 1) % songs.value.length;
+          playMusic(index);
+        };
+
+        return {
+          songs,
+          currentSong,
+          currentIndex,
+          audio,
+          isPlaying,
+          progress,
+          playMusic,
+          prevMusic,
+          nextMusic,
+          updateProgress
+        };
+      }
+    }).mount('#app');
 
   </script>
 </body>
