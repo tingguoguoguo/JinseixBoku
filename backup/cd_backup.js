@@ -4,32 +4,6 @@ const updateFPS = 30
 let time = 0
 const bgColor = 'rgba(0, 0, 0, 0)'
 
-// 控制
-const controls = {
-  speed: 0,
-  fade: 0.99,
-  play1x: function () {
-    cd.angleSpeed = 1
-    controls.fade = 1
-  },
-  play2x: function () {
-    cd.angleSpeed = 2
-    controls.fade = 1
-  },
-}
-
-const gui = new dat.GUI()
-gui.add(controls, 'speed', -4, 4).step(0.01).onChange(function (value) {
-  if (cd) {
-    cd.angleSpeed = value
-  }
-}).listen()
-
-gui.add(controls, 'fade', 0.8, 1).step(0.001).onChange(function (value) {
-}).listen()
-gui.add(controls, 'play1x')
-gui.add(controls, 'play2x')
-
 // 二維向量
 class Vec2 {
   constructor(x, y) {
@@ -111,7 +85,8 @@ class CD {
       p: new Vec2(0, 0),
       angle: 0,
       angleSpeed: 2,
-      dragging: false
+      dragging: false,
+      friction: 0.99,
     }
     Object.assign(def, args)
     Object.assign(this, def)
@@ -169,9 +144,8 @@ class CD {
   }
   update() {
     this.angle += this.angleSpeed
-    this.angleSpeed *= controls.fade
+    this.angleSpeed *= this.friction
 
-    controls.speed = this.angleSpeed
   }
 }
 
@@ -187,8 +161,6 @@ function init() {
 
 // 更新設定
 function update() {
-  const cdArea = document.querySelector('#canvas')
-  const canvasRect = canvas.getBoundingClientRect();
   time++
   cd.update()
   if (mousePosDown) {
@@ -206,18 +178,6 @@ function update() {
     cd.dragging = false
     cd.lastAngle = null
   }
-  // // 當滑鼠在圓內時，滑鼠變成手指
-  // const mousePosCanvas = new Vec2(
-  //   mousePos.x - canvasRect.left,
-  //   mousePos.y - canvasRect.top
-  // );
-  // if (
-  //   mousePosCanvas.sub(new Vec2(cdArea.width / 2, cdArea.height / 2)).length < cd.r
-  // ) {
-  //   cdArea.style.cursor = 'pointer';
-  // } else {
-  //   cdArea.style.cursor = 'initial';
-  // }
 
   // //音樂播放速度控制
   let cur = Math.abs(cd.angleSpeed)
@@ -286,4 +246,5 @@ function mousedown(e) {
   mousePos.set(e.x, e.y)
   mousePosDown = mousePos.clone()
   player.play()
+  cd.friction = 0.99
 }

@@ -366,23 +366,6 @@
 
   <!-- vue 建立playlist & player & 速度控制面板 -->
   <div id="app">
-    <div class="eye">
-
-      <!-- 圓眼球區域 -->
-      <div class="eye__base"></div>
-      <div class="eye__ball">
-        <canvas id="canvas"></canvas>
-        <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
-        <audio src='./music/01-Clock Strikes.mp3' loop></audio>
-      </div>
-
-      <!-- 眼眶區域 -->
-      <div class=" eye__lid">
-        <div class="eye__lid__mask"></div>
-        <div class="eye__lashes"></div>
-      </div>
-
-    </div>
     <div id="playlist">
       <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)">
         <p>{{song.name}}</p>
@@ -417,7 +400,7 @@
   </div>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.global.min.js'></script> <!-- vue -->
-  <!-- <script src="./js/cd.js"></script> 唱盤互動.js -->
+  <script src="./cd_backup.js"></script> <!-- 唱盤互動.js -->
   <script>
     const eye = document.querySelector(".eye")
     const eyeLid = document.querySelector(".eye__lid")
@@ -437,51 +420,6 @@
 
     const app = createApp({
       setup() {
-        class Vec2 {
-          constructor(x, y) {
-            this.x = x
-            this.y = y
-          }
-          set(x, y) {
-            this.x = x
-            this.y = y
-          }
-          move(x, y) {
-            this.x += x
-            this.y += y
-          }
-          add(v) {
-            return new Vec2(this.x + v.x, this.y + v.y)
-          }
-          sub(v) {
-            return new Vec2(this.x - v.x, this.y - v.y)
-          }
-          mul(s) {
-            return new Vec2(this.x * s, this.y * s)
-          }
-          get length() {
-            return Math.sqrt(this.x * this.x + this.y * this.y)
-          }
-          set length(nv) {
-            let temp = this.unit.mul(nv)
-            this.set(temp.x, temp.y)
-          }
-          clone() {
-            return new Vec2(this.x, this.y)
-          }
-          toString() {
-            return `(${this.x}, ${this.y})`
-          }
-          equal(v) {
-            return this.x === v.x && this.y === v.y
-          }
-          get angle() {
-            return Math.atan2(this.y, this.x)
-          }
-          get unit() {
-            return this.mul(1 / this.length)
-          }
-        }
         const songs = ref([
           {
             name: "01-Clock Strikes",
@@ -528,18 +466,6 @@
         const isPlaying = ref(false);
         const progress = ref(0);
         let currentIndex = ref(undefined);
-        // cd--------------------------
-        const updateFPS = 30;
-        let time = 0;
-        const bgColor = 'rgba(0, 0, 0, 0)';
-        const canvas = ref(null);
-        const ctx = ref(null);
-        const cd = ref(null);
-        const player = ref(new Audio());
-        player.value.volume = 0.3;
-        const mousePos = ref(new Vec2(0, 0));
-        let mousePosDown = null;
-        // ----------------------------------------
         const play1x = function () {
           cd.angleSpeed = 1
           cd.friction = 1
@@ -604,173 +530,6 @@
           }
         };
         audio.addEventListener('ended', playNextOrStop);
-        function initCanvas() {
-          const canvasEl = document.querySelector('#canvas');
-          canvas.value = canvasEl;
-          ctx.value = canvasEl.getContext('2d');
-          canvasEl.width = 410;
-          canvasEl.height = 410;
-        }
-
-        class CD {
-          constructor(args) {
-            let def = {
-              r: 200,
-              p: new Vec2(0, 0),
-              angle: 0,
-              angleSpeed: 2,
-              dragging: false,
-              friction: 0.99,
-            };
-            Object.assign(def, args);
-            Object.assign(this, def);
-          }
-          draw() {
-            ctx.value.save();
-            ctx.value.rotate(this.angle);
-            function circle(p, r, fillColor, strokeColor) {
-              ctx.value.beginPath();
-              ctx.value.arc(p.x, p.y, r, 0, Math.PI * 2);
-              if (fillColor) {
-                ctx.value.fillStyle = fillColor;
-                ctx.value.fill();
-              }
-              if (strokeColor) {
-                ctx.value.strokeStyle = strokeColor;
-                ctx.value.stroke();
-              }
-            }
-            circle(this.p, this.r, 'black');
-            circle(this.p, 70, '#bac4cc');
-
-            const img = document.querySelector('img');
-            ctx.value.globalCompositeOperation = 'color-burn';
-            ctx.value.drawImage(img, -this.r / 1.5, -this.r / 1.5);
-            ctx.value.globalCompositeOperation = 'source-over';
-
-            ctx.value.lineWidth = 5;
-            circle(this.p, 70, null, 'white');
-            circle(this.p, 40, 'black');
-            circle(this.p, 15, '#bac4cc');
-            ctx.value.lineWidth = 1;
-
-            for (let i = 0; i < 40; i++) {
-              circle(
-                this.p,
-                (i * this.r) / 40,
-                null,
-                `rgba(255, 255, 255, ${(i % 5) / 20})`
-              );
-            }
-            for (let i = 0; i < 10; i++) {
-              ctx.value.beginPath();
-              let startAngle = i;
-              let endAngle = i + (Math.PI / 2) * this.angleSpeed * 0.5;
-              let opacity = (Math.abs(this.angleSpeed) * i) / 20 + 0.1;
-              ctx.value.arc(this.p.x, this.p.y, (this.r * i) / 10, startAngle, endAngle);
-
-              ctx.value.lineWidth = 0.5;
-              ctx.value.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
-              ctx.value.stroke();
-            }
-            ctx.value.restore();
-          }
-          update() {
-            this.angle += this.angleSpeed;
-            this.angleSpeed *= this.friction;
-          }
-        }
-        function init() {
-          cd.value = new CD({
-            angleSpeed: 0
-          });
-        }
-
-        function update() {
-          time++;
-          cd.value.update();
-          if (mousePosDown) {
-            if (!cd.value.lastAngle) {
-              cd.value.lastAngle = cd.value.angle;
-            }
-            cd.value.dragging = true;
-
-            let delta =
-              mousePos.value.sub(new Vec2(canvas.value.width / 2, canvas.value.height / 2))
-                .angle -
-              mousePosDown.sub(new Vec2(canvas.value.width / 2, canvas.value.height / 2))
-                .angle;
-            cd.value.angle = cd.value.lastAngle + delta;
-            cd.value.angleSpeed = delta;
-          } else {
-            cd.value.dragging = false;
-            cd.value.lastAngle = null;
-          }
-
-          let cur = Math.abs(cd.value.angleSpeed);
-          let volume = Math.sqrt(Math.abs(cd.value.angleSpeed)) / 3;
-          if (cur > 0 && cur < 0.1) {
-            cur = 0.1;
-          }
-          player.value.playbackRate = cur;
-          player.value.volume = volume;
-        }
-
-        function draw() {
-          ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
-          ctx.value.fillStyle = bgColor;
-          ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height);
-
-          ctx.value.save();
-          ctx.value.translate(canvas.value.width / 2, canvas.value.height / 2);
-          ctx.value.beginPath();
-          ctx.value.arc(0, 0, cd.value.r, 0, Math.PI * 2);
-          ctx.value.clip();
-          cd.value.draw();
-          ctx.value.restore();
-
-          requestAnimationFrame(draw);
-        }
-
-        onMounted(() => {
-          initCanvas();
-          init();
-          draw();
-          setInterval(update, 1000 / updateFPS);
-        });
-        console.log(draw())
-
-        window.addEventListener('resize', initCanvas);
-
-        const eye = document.querySelector(".eye");
-        const eyeLid = document.querySelector(".eye__lid");
-        const eyeLidmask = document.querySelector(".eye__lid__mask");
-        const eyeBall = document.querySelector(".eye__ball");
-
-        eye.addEventListener("mouseenter", () => {
-          eyeLid.style.transform = 'translate(-50%, -50%)  rotateX(180deg)';
-          eyeLidmask.style.opacity = '0';
-          eyeBall.style.opacity = '1';
-          eyeBall.style.bottom = '150px';
-        });
-
-        // 滑鼠事件跟紀錄
-        window.addEventListener('mousemove', (e) => {
-          mousePos.value.set(e.x, e.y);
-        });
-
-        window.addEventListener('mouseup', (e) => {
-          mousePos.value.set(e.x, e.y);
-          mousePosDown = null;
-        });
-
-        window.addEventListener('mousedown', (e) => {
-          mousePos.value.set(e.x, e.y);
-          mousePosDown = mousePos.value.clone();
-          player.value.play();
-          cd.value.friction = 0.99;
-        });
-
 
 
 
@@ -789,11 +548,7 @@
           playNextOrStop,
           play1x,
           play2x,
-          play05x,
-          initCanvas,
-          init,
-          draw,
-          update
+          play05x
         };
       }
     }).mount('#app');
