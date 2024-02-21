@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: rgb(223, 169, 169);
+      overflow: hidden;
+    }
+
+
+    .eye {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 700px;
+      height: 700px;
+    }
+
+
+    .eye__base {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-image: url(https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg);
+      /* background: rgb(218, 216, 216); */
+      border-radius: 80% 0;
+      background-size: cover;
+      transform: rotate(45deg);
+      overflow: hidden;
+    }
+
+    .eye__ball {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 100%;
+    }
+
+    #canvas:hover {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="eye">
+
+    <!-- 圓眼球區域 -->
+    <div class="eye__base"></div>
+    <div class="eye__ball">
+      <canvas id="canvas"></canvas>
+      <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
+      <audio src='./music/01-Clock Strikes.mp3' loop></audio>
+    </div>
+
+    <!-- 眼眶區域 -->
+    <div class=" eye__lid">
+      <div class="eye__lid__mask"></div>
+      <div class="eye__lashes"></div>
+    </div>
+
+  </div>
+
+  <!-- Vue 控制面板 -->
+  <div id="controls">
+
+    <button @click="play1x">Play 1x</button>
+    <button @click="play2x">Play 2x</button>
+    <button @click="play05x">Play 0.5x</button>
+  </div>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.global.min.js'></script>
+  <script>
+    // CD 唱片 ---------------------------------------------------------------
+    const { createApp, ref } = Vue;
+    const app = createApp({
+      setup() {
+        const play1x = function () {
+          cd.angleSpeed = 1
+          cd.friction = 1
+        }
+        const play2x = function () {
+          cd.angleSpeed = 2
+          cd.friction = 1
+        }
+        const play05x = function () {
+          cd.angleSpeed = 0.5
+          cd.friction = 1
+        }
+        return {
+          play1x,
+          play2x,
+          play05x
+        }
+      }
+    }).mount('#controls')
+
+    // 環境變數
+    const updateFPS = 30
+    let time = 0
+    const bgColor = 'rgba(0, 0, 0, 0)'
+
+    // 二維向量
+    class Vec2 {
+      constructor(x, y) {
+        this.x = x
+        this.y = y
+      }
+      set(x, y) {
+        this.x = x
+        this.y = y
+      }
+      move(x, y) {
+        this.x += x
+        this.y += y
+      }
+      add(v) {
+        return new Vec2(this.x + v.x, this.y + v.y)
+      }
+      sub(v) {
+        return new Vec2(this.x - v.x, this.y - v.y)
+      }
+      mul(s) {
+        return new Vec2(this.x * s, this.y * s)
+      }
+      get length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y)
+      }
+      set length(nv) {
+        let temp = this.unit.mul(nv)
+        this.set(temp.x, temp.y)
+      }
+      clone() {
+        return new Vec2(this.x, this.y)
+      }
+      toString() {
+        return `(${this.x}, ${this.y})`
+      }
+      equal(v) {
+        return this.x === v.x && this.y === v.y
+      }
+      get angle() {
+        return Math.atan2(this.y, this.x)
+      }
+      get unit() {
+        return this.mul(1 / this.length)
+      }
+    }
+
+
+    const player = document.querySelector('audio')
+    player.volume = 0.3
+
+    // Canvas 初始化
+    const canvas = document.querySelector('#canvas')
+    const ctx = canvas.getContext('2d')
+
+    // 繪製圓形
+    ctx.circle = function (v, r) {
+      ctx.arc(v.x, v.y, r, 0, Math.PI * 2)
+    }
+
+    // 繪製線條
+    ctx.line = function (v1, v2) {
+      ctx.moveTo(v1.x, v1.y)
+      ctx.lineTo(v2.x, v2.y)
+    }
+
+    function initCanvas() {
+      ww = canvas.width = 410
+      wh = canvas.height = 410
+    }
+
+    initCanvas()
+
+    // 建立 CD 類別
+    class CD {
+      constructor(args) {
+        let def = {
+          r: 200,
+          p: new Vec2(0, 0),
+          angle: 0,
+          angleSpeed: 2,
+          dragging: false,
+          friction: 0.99
+        }
+        Object.assign(def, args)
+        Object.assign(this, def)
+      }
+      draw() {
+        ctx.save()
+        ctx.rotate(this.angle)
+        function circle(p, r, fillColor, strokeColor) { //畫圓形的函數
+          ctx.beginPath()
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
+          if (fillColor) {
+            ctx.fillStyle = fillColor
+            ctx.fill()
+          }
+          if (strokeColor) {
+            ctx.strokeStyle = strokeColor
+            ctx.stroke()
+          }
+        }
+        circle(this.p, this.r, 'black') //中間的黑圈
+        circle(this.p, 70, '#bac4cc') //中間的圖片底色
+
+        const img = document.querySelector('img')
+        ctx.globalCompositeOperation = 'color-burn' //圖層疊合模式
+        ctx.drawImage(img, -this.r / 1.5, -this.r / 1.5)
+        ctx.globalCompositeOperation = 'source-over'
+
+
+        ctx.lineWidth = 5
+        circle(this.p, 70, null, 'white')
+        circle(this.p, 40, 'black')
+        circle(this.p, 15, '#bac4cc')
+        ctx.lineWidth = 1
+
+        for (let i = 0; i < 40; i++) { //網格，白色線條
+          circle(
+            this.p,
+            (i * this.r) / 40,
+            null,
+            `rgba(255, 255, 255, ${(i % 5) / 20})`
+          )
+        }
+        for (let i = 0; i < 10; i++) { //旋轉時的速度線
+          ctx.beginPath()
+          let startAngle = i
+          let endAngle = i + Math.PI / 2 * this.angleSpeed * 0.5
+          let opacity = Math.abs(this.angleSpeed) * i / 20 + 0.1
+          ctx.arc(this.p.x, this.p.y, this.r * i / 10, startAngle, endAngle)
+
+          ctx.lineWidth = 0.5
+          ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`
+          ctx.stroke()
+        }
+        ctx.restore()
+      }
+      update() {
+        this.angle += this.angleSpeed
+        this.angleSpeed *= this.friction
+      }
+    }
+
+    var cd = null
+
+
+    // 初始化CD
+    function init() {
+      cd = new CD({
+        angleSpeed: 0
+      })
+    }
+
+    // 更新設定
+    function update() {
+      time++
+      cd.update()
+      if (mousePosDown) {
+        if (!cd.lastAngle) {
+          cd.lastAngle = cd.angle
+        }
+        cd.dragging = true
+
+        let delta =
+          mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
+          mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
+        cd.angle = cd.lastAngle + delta
+        cd.angleSpeed = delta
+      } else {
+        cd.dragging = false
+        cd.lastAngle = null
+      }
+
+      // //音樂播放速度控制
+      let cur = Math.abs(cd.angleSpeed)
+      let volume = Math.sqrt(Math.abs(cd.angleSpeed)) / 3
+      if (cur > 0 && cur < 0.1) {
+        cur = 0.1
+      }
+      player.playbackRate = cur
+      player.volume = volume
+    }
+
+    // 繪圖設定
+    function draw() {
+      // 清空畫布
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 清空背景
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, ww, wh)
+
+      // ---繪畫區塊---
+
+      ctx.save()
+      ctx.translate(ww / 2, wh / 2)
+      ctx.beginPath()
+      ctx.arc(0, 0, cd.r, 0, Math.PI * 2)
+      ctx.clip() //讓圖片只顯示在圓形範圍內
+      cd.draw()
+      ctx.restore()
+
+      requestAnimationFrame(draw)
+    }
+
+    function loaded() {
+      initCanvas()
+      init()
+      requestAnimationFrame(draw)
+      setInterval(update, 1000 / updateFPS)
+    }
+
+    window.addEventListener('load', loaded)
+    window.addEventListener('resize', initCanvas)
+
+    // 滑鼠事件跟紀錄
+    const mousePos = new Vec2(0, 0)
+    let mousePosDown = null
+    let mousePosUp = null
+
+    window.addEventListener('mousemove', mousemove)
+    window.addEventListener('mouseup', mouseup)
+    window.addEventListener('mousedown', mousedown)
+
+    function mousemove(e) {
+      mousePos.set(e.x, e.y)
+    }
+
+
+
+    function mouseup(e) {
+      mousePos.set(e.x, e.y)
+      mousePosUp = mousePos.clone()
+      mousePosDown = null
+    }
+
+    function mousedown(e) {
+      mousePos.set(e.x, e.y)
+      mousePosDown = mousePos.clone()
+      player.play()
+      cd.friction = 0.99
+    }
+  </script>
+</body>
+
+</html>
