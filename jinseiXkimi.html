@@ -99,7 +99,7 @@
 
     }
 
-    /* .eye__lid__mask {
+    .eye__lid__mask {
       position: absolute;
       width: 100%;
       height: 100%;
@@ -107,7 +107,7 @@
       border-radius: 80% 0;
       transform: rotate(45deg);
 
-    } */
+    }
 
     #oneoclock {
       display: flex;
@@ -185,10 +185,6 @@
       z-index: -1;
     }
 
-    #canvas:hover {
-      cursor: pointer;
-    }
-
     @keyframes l-after {
       0% {
         transform: translate(-25%, -50%) rotate(15deg);
@@ -257,7 +253,7 @@
     }
 
     #player i {
-      font-size: 48px;
+      font-size: 36px;
       cursor: pointer;
     }
 
@@ -329,6 +325,14 @@
       color: #ffffff;
       cursor: pointer;
     }
+
+    .text-red-500 {
+      color: #d33636;
+    }
+
+    .text-grey-500 {
+      color: #d33636;
+    }
   </style>
 </head>
 
@@ -341,7 +345,7 @@
     <div class="eye__ball">
       <canvas id="canvas"></canvas>
       <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
-      <audio src='./music/01-Clock Strikes.mp3' loop></audio>
+      <audio loop></audio>
     </div>
 
     <!-- 眼眶區域 -->
@@ -367,7 +371,8 @@
   <!-- vue 建立playlist & player & 速度控制面板 -->
   <div id="app">
     <div id="playlist">
-      <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)">
+      <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)"
+        :class="{ 'text-grey-500': currentSong === song }">
         <p>{{song.name}}</p>
       </div>
     </div>
@@ -379,6 +384,9 @@
       <!-- <progress id="player__progress" max="100" :value="progress"></progress> -->
       <input type="range" id="player__knob" :value="progress" @input="seekMusic" step="0.01">
       <div id="player__control">
+        <div id="player__control__repeat" @click="repeatMusic">
+          <i :class="['fa-solid fa-repeat', { 'text-red-500': isRepeating }]"></i>
+        </div>
         <div id="player__control__prev" @click="prevMusic">
           <i class="fa-solid fa-backward-fast"></i>
         </div>
@@ -388,6 +396,9 @@
         </div>
         <div id="player__control__next" @click="nextMusic">
           <i class="fa-solid fa-forward-fast"></i>
+        </div>
+        <div id="player__control__shuffle" @click="shuffleMusic">
+          <i :class="['fa-solid fa-shuffle', { 'text-red-500': isShuffling }]"></i>
         </div>
       </div>
     </div>
@@ -400,20 +411,34 @@
   </div>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.global.min.js'></script> <!-- vue -->
-  <script src="./js/cd.js"></script> <!-- 唱盤互動.js -->
+  <script src="./js/cd.js"></script> <!-- 唱盤繪畫.js -->
   <script>
     const eye = document.querySelector(".eye")
     const eyeLid = document.querySelector(".eye__lid")
     const eyeLidmask = document.querySelector(".eye__lid__mask")
     const eyeBall = document.querySelector(".eye__ball")
+    // 開眼的函數
+    function openEye() {
+      eyeLid.style.transform = 'translate(-50%, -50%) rotateX(180deg)';
+      eyeLidmask.style.opacity = '0';
+      eyeBall.style.opacity = '1';
+      eyeBall.style.bottom = '150px';
+    }
 
-    eye.addEventListener("mouseenter", () => {
-      eyeLid.style.transform = 'translate(-50%, -50%)  rotateX(180deg)'
-      eyeLidmask.style.opacity = '0'
-      eyeBall.style.opacity = '1'
-      eyeBall.style.bottom = '150px'
+    // 關眼的函數
+    function closeEye() {
+      eyeLid.style.transform = 'translate(-50%, -50%)';
+      eyeLidmask.style.opacity = '1';
+      eyeBall.style.opacity = '0';
+      eyeBall.style.bottom = '-50px';
+    }
 
-    })
+    // 每隔 4.8 秒眨一次眼
+    setInterval(() => {
+      closeEye();
+      // 0.5 秒後再開眼
+      setTimeout(openEye, 500);
+    }, 4800);
 
     // vue-----------------------------------------------------------------
     const { createApp, ref, reactive, onMounted } = Vue;
@@ -464,6 +489,8 @@
         const currentSong = ref(songs.value[0]);
         const audio = new Audio();
         const isPlaying = ref(false);
+        const isRepeating = ref(false);
+        const isShuffling = ref(false);
         const progress = ref(0);
         let currentIndex = ref(undefined);
         const play1x = function () {
@@ -489,15 +516,21 @@
               progress.value = 0;
               audio.play();
               isPlaying.value = true;
+              cd.angleSpeed = 1
+              cd.friction = 1
               audio.addEventListener('timeupdate', updateProgress);
             }, { once: true });
           } else {
             if (audio.paused) {
               audio.play();
               isPlaying.value = true;
+              cd.angleSpeed = 1
+              cd.friction = 1
             } else {
               audio.pause();
               isPlaying.value = false;
+              cd.angleSpeed = 0
+              cd.friction = 1
             }
           }
         }
@@ -531,6 +564,20 @@
         };
         audio.addEventListener('ended', playNextOrStop);
 
+        const repeatMusic = () => {
+          isRepeating.value = !isRepeating.value;
+          audio.loop = isRepeating.value;
+        };
+
+        const shuffleMusic = () => {
+          isShuffling.value = !isShuffling.value;
+          if (isShuffling.value) {
+            songs.value = songs.value.sort(() => Math.random() - 0.5);
+          } else {
+            songs.value = songs.value.sort((a, b) => a.name.localeCompare(b.name));
+          }
+        };
+
 
 
         return {
@@ -539,6 +586,8 @@
           currentIndex,
           audio,
           isPlaying,
+          isRepeating,
+          isShuffling,
           progress,
           playMusic,
           prevMusic,
@@ -548,7 +597,9 @@
           playNextOrStop,
           play1x,
           play2x,
-          play05x
+          play05x,
+          repeatMusic,
+          shuffleMusic
         };
       }
     }).mount('#app');

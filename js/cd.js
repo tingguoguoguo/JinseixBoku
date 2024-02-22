@@ -222,29 +222,29 @@ window.addEventListener('load', loaded)
 window.addEventListener('resize', initCanvas)
 
 // 滑鼠事件跟紀錄
-const mousePos = new Vec2(0, 0)
-let mousePosDown = null
-let mousePosUp = null
+// const mousePos = new Vec2(0, 0)
+// let mousePosDown = null
+// let mousePosUp = null
 
-window.addEventListener('mousemove', mousemove)
-window.addEventListener('mouseup', mouseup)
-window.addEventListener('mousedown', mousedown)
+// window.addEventListener('mousemove', mousemove)
+// window.addEventListener('mouseup', mouseup)
+// window.addEventListener('mousedown', mousedown)
 
-function mousemove(e) {
-  mousePos.set(e.x, e.y)
-}
+// function mousemove(e) {
+//   mousePos.set(e.x, e.y)
+// }
 
 
 
-function mouseup(e) {
-  mousePos.set(e.x, e.y)
-  mousePosUp = mousePos.clone()
-  mousePosDown = null
-}
+// function mouseup(e) {
+//   mousePos.set(e.x, e.y)
+//   mousePosUp = mousePos.clone()
+//   mousePosDown = null
+// }
 
-function mousedown(e) {
-  mousePos.set(e.x, e.y)
-  mousePosDown = mousePos.clone()
-  player.play()
-  cd.friction = 0.99
-}
+// function mousedown(e) {
+//   mousePos.set(e.x, e.y)
+//   mousePosDown = mousePos.clone()
+//   player.play()
+//   cd.friction = 0.99
+// }
