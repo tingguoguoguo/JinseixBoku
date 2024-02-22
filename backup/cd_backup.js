@@ -71,8 +71,8 @@ ctx.line = function (v1, v2) {
 }
 
 function initCanvas() {
-  ww = canvas.width = 410
-  wh = canvas.height = 410
+  ww = canvas.width = 420
+  wh = canvas.height = 420
 }
 
 initCanvas()
@@ -106,8 +106,13 @@ class CD {
         ctx.stroke()
       }
     }
-    circle(this.p, this.r, 'black') //中間的黑圈
+
+    ctx.shadowBlur = 100
+    ctx.shadowColor = '#fff'
+    circle(this.p, this.r, 'black') //中間的黑色大圓
     circle(this.p, 70, '#bac4cc') //中間的圖片底色
+    ctx.shadowBlur = 0
+
 
     const img = document.querySelector('img')
     ctx.globalCompositeOperation = 'color-burn' //圖層疊合模式
@@ -163,21 +168,21 @@ function init() {
 function update() {
   time++
   cd.update()
-  if (mousePosDown) {
-    if (!cd.lastAngle) {
-      cd.lastAngle = cd.angle
-    }
-    cd.dragging = true
+  // if (mousePosDown) {
+  //   if (!cd.lastAngle) {
+  //     cd.lastAngle = cd.angle
+  //   }
+  //   cd.dragging = true
 
-    let delta =
-      mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
-      mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
-    cd.angle = cd.lastAngle + delta
-    cd.angleSpeed = delta
-  } else {
-    cd.dragging = false
-    cd.lastAngle = null
-  }
+  //   let delta =
+  //     mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
+  //     mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
+  //   cd.angle = cd.lastAngle + delta
+  //   cd.angleSpeed = delta
+  // } else {
+  //   cd.dragging = false
+  //   cd.lastAngle = null
+  // }
 
   // //音樂播放速度控制
   let cur = Math.abs(cd.angleSpeed)
@@ -208,6 +213,19 @@ function draw() {
   cd.draw()
   ctx.restore()
 
+  // 繪製陰影
+  ctx.save();
+  ctx.translate(ww / 2, wh / 2);
+  ctx.shadowBlur = 200; // 增加陰影的模糊程度
+  ctx.shadowColor = 'rgba(0,0,0,0.5)'; // 增加陰影的顏色的不透明度
+  ctx.shadowOffsetX = 20; // 設定陰影的偏移量
+  ctx.shadowOffsetY = 20; // 設定陰影的偏移量
+  ctx.beginPath();
+  ctx.arc(0, 0, cd.r + 1, 0, Math.PI * 2, true); // 繪製一個圓形
+  ctx.closePath();
+  ctx.strokeStyle = 'transparent'; // 設定圓形的邊緣顏色為透明
+  ctx.stroke(); // 繪製圓形的邊緣
+  ctx.restore();
   requestAnimationFrame(draw)
 }
 
@@ -222,29 +240,29 @@ window.addEventListener('load', loaded)
 window.addEventListener('resize', initCanvas)
 
 // 滑鼠事件跟紀錄
-const mousePos = new Vec2(0, 0)
-let mousePosDown = null
-let mousePosUp = null
+// const mousePos = new Vec2(0, 0)
+// let mousePosDown = null
+// let mousePosUp = null
 
-window.addEventListener('mousemove', mousemove)
-window.addEventListener('mouseup', mouseup)
-window.addEventListener('mousedown', mousedown)
+// window.addEventListener('mousemove', mousemove)
+// window.addEventListener('mouseup', mouseup)
+// window.addEventListener('mousedown', mousedown)
 
-function mousemove(e) {
-  mousePos.set(e.x, e.y)
-}
+// function mousemove(e) {
+//   mousePos.set(e.x, e.y)
+// }
 
 
 
-function mouseup(e) {
-  mousePos.set(e.x, e.y)
-  mousePosUp = mousePos.clone()
-  mousePosDown = null
-}
+// function mouseup(e) {
+//   mousePos.set(e.x, e.y)
+//   mousePosUp = mousePos.clone()
+//   mousePosDown = null
+// }
 
-function mousedown(e) {
-  mousePos.set(e.x, e.y)
-  mousePosDown = mousePos.clone()
-  player.play()
-  cd.friction = 0.99
-}
+// function mousedown(e) {
+//   mousePos.set(e.x, e.y)
+//   mousePosDown = mousePos.clone()
+//   player.play()
+//   cd.friction = 0.99
+// }

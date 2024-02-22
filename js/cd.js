@@ -71,8 +71,8 @@ ctx.line = function (v1, v2) {
 }
 
 function initCanvas() {
-  ww = canvas.width = 410
-  wh = canvas.height = 410
+  ww = canvas.width = 420
+  wh = canvas.height = 420
 }
 
 initCanvas()
@@ -106,8 +106,13 @@ class CD {
         ctx.stroke()
       }
     }
-    circle(this.p, this.r, 'black') //中間的黑圈
+
+    ctx.shadowBlur = 100
+    ctx.shadowColor = '#fff'
+    circle(this.p, this.r, 'black') //中間的黑色大圓
     circle(this.p, 70, '#bac4cc') //中間的圖片底色
+    ctx.shadowBlur = 0
+
 
     const img = document.querySelector('img')
     ctx.globalCompositeOperation = 'color-burn' //圖層疊合模式
@@ -163,21 +168,21 @@ function init() {
 function update() {
   time++
   cd.update()
-  if (mousePosDown) {
-    if (!cd.lastAngle) {
-      cd.lastAngle = cd.angle
-    }
-    cd.dragging = true
+  // if (mousePosDown) {
+  //   if (!cd.lastAngle) {
+  //     cd.lastAngle = cd.angle
+  //   }
+  //   cd.dragging = true
 
-    let delta =
-      mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
-      mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
-    cd.angle = cd.lastAngle + delta
-    cd.angleSpeed = delta
-  } else {
-    cd.dragging = false
-    cd.lastAngle = null
-  }
+  //   let delta =
+  //     mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
+  //     mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
+  //   cd.angle = cd.lastAngle + delta
+  //   cd.angleSpeed = delta
+  // } else {
+  //   cd.dragging = false
+  //   cd.lastAngle = null
+  // }
 
   // //音樂播放速度控制
   let cur = Math.abs(cd.angleSpeed)
