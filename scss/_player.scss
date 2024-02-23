@@ -1,0 +1,111 @@
+// 播放器控制:曲目
+#player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  width: 100%;
+  position: fixed;
+  bottom: 16px;
+  height: 200px;
+  user-select: none;
+
+
+  #player__info {
+    font-family: "Patua One", serif;
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+  #player__control {
+    display: flex;
+    justify-content: space-between;
+    width: 580px;
+    margin-bottom: 32px;
+
+    i {
+      font-size: 36px;
+      cursor: pointer;
+    }
+
+    i:hover {
+      color: #d33636;
+    }
+  }
+
+  #player__knob {
+    width: 680px;
+    height: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 50px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: #e0e0e0;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #d33636;
+    cursor: pointer;
+    /* box-shadow: -100vw 0 0 100vw #d33636; 進度條，但是會有問題 */
+  }
+
+  @include xl {
+    transform: translate(9%, -20%) scale(0.8);
+    height: 120px;
+  }
+
+}
+
+
+// 播放器控制: 速度
+#controls__speed {
+  width: 40%;
+  position: fixed;
+  bottom: 110px;
+  padding: 16px;
+
+  button {
+    width: 100px;
+    height: 36px;
+    border: none;
+    color: #000000;
+    font-size: 16px;
+    background-color: #ffffff;
+    font-family: "Patua One", serif;
+    margin-right: 40px;
+    border-radius: 8px;
+
+    :hover {
+      background-color: #d33636;
+      color: #ffffff;
+      cursor: pointer;
+    }
+  }
+
+  @include xl {
+    bottom: 20px;
+    transform: translate(-4%, 0%)scale(0.9);
+
+    button {
+      width: 80px;
+      margin-right: 16px;
+    }
+  }
+}
+
+.text-red-500 {
+  color: #d33636;
+}

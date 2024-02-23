@@ -1,0 +1,36 @@
+#playlist {
+  font-family: "Patua One", serif;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  margin-top: 32px;
+  margin-left: 16px;
+  float: left;
+  width: 20%;
+  user-select: none;
+
+  :hover {
+    border-radius: 8px;
+    background-color: #cdcbcb;
+    cursor: pointer;
+  }
+
+  div {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  div:last-child {
+    border-bottom: none;
+  }
+
+  p {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  @include xl {
+    transform: translate(-4%, -15%) scale(0.9);
+  }
+}

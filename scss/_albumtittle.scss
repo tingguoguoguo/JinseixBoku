@@ -1,0 +1,103 @@
+#oneoclock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 16px;
+  margin-top: 28px;
+  width: 550px;
+  height: 200px;
+  user-select: none;
+
+  .text {
+    margin: 4px;
+    color: rgb(255, 255, 255);
+    font-size: 80px;
+    font-family: 'Patua One', serif;
+
+  }
+
+  .l {
+    position: relative;
+    width: 100px;
+    height: 180px;
+  }
+
+  .l span {
+    display: block;
+    left: 24px;
+    top: 92px;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    border-radius: 50%;
+    background: #ffffff;
+
+  }
+
+  .l:after,
+  .l:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-radius: 0.1rem;
+    top: 60%;
+    left: 40%;
+    opacity: 0.9;
+  }
+
+  .l:after {
+    border-top: 0.4rem solid transparent;
+    border-bottom: 0.4rem solid transparent;
+    border-left: 12rem solid #ffffff;
+    transform-origin: 25% 50%;
+    animation: l-after 1s ease infinite alternate;
+  }
+
+  .l:before {
+    border-top: 0.4rem solid transparent;
+    border-bottom: 0.4rem solid transparent;
+    border-left: 9rem solid #ffffff;
+    transform-origin: 15% 50%;
+    animation: l-before 1s ease infinite alternate;
+  }
+
+  @include xl {
+    transform: translate(-10%, -15%) scale(0.8);
+  }
+}
+
+#album {
+  position: absolute;
+  top: 170px;
+  margin-left: 16px;
+  font-family: "Shippori Antique", sans-serif;
+  font-size: 56px;
+  color: rgb(255, 255, 255);
+  user-select: none;
+  z-index: -1;
+
+  @include xl {
+    transform: translate(-10%, -50%)scale(0.8);
+  }
+}
+
+@keyframes l-after {
+  0% {
+    transform: translate(-25%, -50%) rotate(15deg);
+  }
+
+  100% {
+    transform: translate(-25%, -50%) rotate(10deg);
+  }
+}
+
+@keyframes l-before {
+  0% {
+    transform: translate(-15%, -50%) rotate(-70deg);
+  }
+
+  100% {
+    transform: translate(-15%, -50%) rotate(-88deg);
+  }
+}
