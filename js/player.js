@@ -64,13 +64,18 @@ const app = createApp({
       cd.friction = 1
     }
 
-    const playMusic = (index) => {
+    const playMusic = (index, speed = 1) => {
+      audio.playbackRate = speed;
+      cd.angleSpeed = speed;
+      cd.friction = 1
       // 如果 index 為 undefined 或者 index 不等於 currentIndex.value，則播放歌曲
       if (index === undefined || index !== currentIndex.value) {
+        console.log("haha")
         currentIndex.value = index !== undefined ? index : 0; // 如果 index 為 undefined，播放第一首歌
         currentSong.value = songs.value[currentIndex.value];
         audio.src = currentSong.value.src;
         audio.addEventListener('canplay', () => {
+          audio.playbackRate = speed;
           progress.value = 0;
           audio.play();
           isPlaying.value = true;
@@ -82,8 +87,6 @@ const app = createApp({
         if (audio.paused) {
           audio.play();
           isPlaying.value = true;
-          cd.angleSpeed = 1
-          cd.friction = 1
         } else {
           audio.pause();
           isPlaying.value = false;

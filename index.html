@@ -75,7 +75,7 @@
         <div id="player__control__prev" @click="prevMusic">
           <i class="fa-solid fa-backward-fast"></i>
         </div>
-        <div id="player__control__play" @click="playMusic(currentIndex)">
+        <div id="player__control__play" @click="playMusic(currentIndex, 1)">
           <i class="fa-solid fa-play" v-if="!isPlaying"></i>
           <i class="fa-solid fa-pause" v-else></i>
         </div>
@@ -89,9 +89,9 @@
     </div>
 
     <div id="controls__speed">
-      <button @click="play05x">Play 0.5x</button>
-      <button @click="play1x">Play 1x</button>
-      <button @click="play2x">Play 2x</button>
+      <button @click="playMusic(currentIndex, 0.5)">Play 0.5x</button>
+      <button @click="playMusic(currentIndex, 1)">Play 1x</button>
+      <button @click="playMusic(currentIndex, 2)">Play 2x</button>
     </div>
   </div>
 

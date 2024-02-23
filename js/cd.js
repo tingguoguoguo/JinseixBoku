@@ -96,6 +96,7 @@ class CD {
     ctx.rotate(this.angle)
     function circle(p, r, fillColor, strokeColor) { //畫圓形的函數
       ctx.beginPath()
+
       ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
       if (fillColor) {
         ctx.fillStyle = fillColor
@@ -105,18 +106,20 @@ class CD {
         ctx.strokeStyle = strokeColor
         ctx.stroke()
       }
-    }
+      ctx.closePath()
 
-    ctx.shadowBlur = 100
-    ctx.shadowColor = '#fff'
-    circle(this.p, this.r, 'black') //中間的黑色大圓
-    circle(this.p, 70, '#bac4cc') //中間的圖片底色
+    }
+    ctx.shadowBlur = 11
+    ctx.shadowColor = 'black';
+    circle(this.p, this.r, 'black', null) //中間的黑色大圓
     ctx.shadowBlur = 0
+    ctx.shadowColor = 'rgba(0, 0, 0, 0)'
+    circle(this.p, 70, '#bac4cc') //中間的圖片底色
 
 
     const img = document.querySelector('img')
     ctx.globalCompositeOperation = 'color-burn' //圖層疊合模式
-    ctx.drawImage(img, -this.r / 1.5, -this.r / 1.5)
+    ctx.drawImage(img, 0, 0, 200, 200, -this.r / 1.5, -this.r / 1.5, 200, 200)
     ctx.globalCompositeOperation = 'source-over'
 
 
@@ -209,8 +212,9 @@ function draw() {
   ctx.translate(ww / 2, wh / 2)
   ctx.beginPath()
   ctx.arc(0, 0, cd.r, 0, Math.PI * 2)
-  ctx.clip() //讓圖片只顯示在圓形範圍內
+
   cd.draw()
+
   ctx.restore()
 
   requestAnimationFrame(draw)
