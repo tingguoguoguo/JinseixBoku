@@ -51,18 +51,6 @@ const app = createApp({
     const isShuffling = ref(false);
     const progress = ref(0);
     let currentIndex = ref(undefined);
-    const play1x = function () {
-      cd.angleSpeed = 1
-      cd.friction = 1
-    }
-    const play2x = function () {
-      cd.angleSpeed = 2
-      cd.friction = 1
-    }
-    const play05x = function () {
-      cd.angleSpeed = 0.5
-      cd.friction = 1
-    }
 
     const playMusic = (index, speed = 1) => {
       audio.playbackRate = speed;
@@ -156,9 +144,6 @@ const app = createApp({
       updateProgress,
       seekMusic,
       playNextOrStop,
-      play1x,
-      play2x,
-      play05x,
       repeatMusic,
       shuffleMusic
     };

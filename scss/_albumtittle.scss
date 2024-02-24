@@ -63,7 +63,7 @@
   }
 
   @include xl {
-    transform: translate(-10%, -15%) scale(0.8);
+    transform: translate(-20%, -22%) scale(0.6);
   }
 }
 
@@ -78,7 +78,7 @@
   z-index: -1;
 
   @include xl {
-    transform: translate(-10%, -50%)scale(0.8);
+    transform: translate(-20%, -75%)scale(0.6);
   }
 }
 
