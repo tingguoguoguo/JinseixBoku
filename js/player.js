@@ -51,21 +51,6 @@ const app = createApp({
     const progress = ref(0);
     let currentIndex = ref(undefined);
 
-    const windowWidth = ref(window.innerWidth);
-    const previousWindowWidth = ref(window.innerWidth);
-
-    const handleResize = () => {
-      previousWindowWidth.value = windowWidth.value;
-      windowWidth.value = window.innerWidth;
-      console.log('視窗大小 8 8 8')
-
-
-      if ((previousWindowWidth.value <= 767 && windowWidth.value > 767) ||
-        (previousWindowWidth.value > 767 && windowWidth.value <= 767)) {
-        console.log('視窗大小改變');
-      }
-    };
-
     const isLargeScreen = ref(window.innerWidth > 767);
     const updateScreenSize = () => {
       isLargeScreen.value = window.innerWidth > 767;
@@ -149,12 +134,10 @@ const app = createApp({
 
     onMounted(() => {
       window.addEventListener('resize', updateScreenSize);
-      window.addEventListener('resize', handleResize);
     });
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', updateScreenSize);
-      window.removeEventListener('resize', handleResize);
     });
 
 
@@ -169,8 +152,6 @@ const app = createApp({
       isShuffling,
       progress,
       isLargeScreen,
-      windowWidth,
-      previousWindowWidth,
       playMusic,
       prevMusic,
       nextMusic,
@@ -180,7 +161,6 @@ const app = createApp({
       repeatMusic,
       shuffleMusic,
       updateScreenSize,
-      handleResize
     };
   }
 }).mount('#app');
