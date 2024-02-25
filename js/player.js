@@ -6,41 +6,41 @@ const app = createApp({
     const songs = ref([
       {
         name: "01-Clock Strikes",
-        src: "./music/01-Clock Strikes.mp3"
+        src: "../music/01-Clock Strikes.mp3"
       },
       {
         name: "02-Nothing Helps",
-        src: "./music/02-Nothing helps.mp3"
+        src: "../music/02-Nothing Helps.mp3"
       },
       {
         name: "03-The Same As...",
-        src: "./music/03-the same as....mp3"
+        src: "../music/03-the same as....mp3"
       },
       {
         name: "04-Smiling Down",
-        src: "./music/04-Smiling down.mp3"
+        src: "../music/04-Smiling down.mp3"
       },
       {
         name: "05-Ending Story??",
-        src: "./music/05-Ending Story.mp3"
+        src: "../music/05-Ending Story.mp3"
       },
       {
         name: "06-The Beginning",
-        src: "./music/06-The Beginning.mp3"
+        src: "../music/06-The Beginning.mp3"
       },
       {
         name: "07-ONION!",
-        src: "./music/07-ONION!.mp3"
+        src: "../music/07-ONION!.mp3"
       },
       {
         name: "08-Be The Light",
-        src: "./music/08-Be the Light.mp3"
+        src: "../music/08-Be the Light.mp3"
       }, {
         name: "09-Deeper Deeper",
-        src: "./music/09-Deeper Deeper.mp3"
+        src: "../music/09-Deeper Deeper.mp3"
       }, {
         name: "10-All Mine",
-        src: "./music/10-All Mine.mp3"
+        src: "../music/10-All Mine.mp3"
       }
     ]);
     const currentSong = ref(songs.value[0]);
