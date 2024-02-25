@@ -10,7 +10,7 @@ const app = createApp({
       },
       {
         name: "02-Nothing Helps",
-        src: "../music/02-Nothing Helps.mp3"
+        src: "../music/02-NothingHelps.mp3"
       },
       {
         name: "03-The Same As...",
