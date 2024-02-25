@@ -1,0 +1,15 @@
+#big__size {
+  display: block;
+
+  @include md {
+    display: none;
+  }
+}
+
+#small__size {
+  display: none;
+
+  @include md {
+    display: block;
+  }
+}

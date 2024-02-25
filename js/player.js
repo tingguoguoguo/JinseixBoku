@@ -1,5 +1,5 @@
 // vue-----------------------------------------------------------------
-const { createApp, ref, reactive, onMounted } = Vue;
+const { createApp, ref, reactive, onMounted, onBeforeUnmount } = Vue;
 
 const app = createApp({
   setup() {
@@ -43,7 +43,6 @@ const app = createApp({
         src: "./music/10-All Mine.mp3"
       }
     ]);
-
     const currentSong = ref(songs.value[0]);
     const audio = new Audio();
     const isPlaying = ref(false);
@@ -51,6 +50,27 @@ const app = createApp({
     const isShuffling = ref(false);
     const progress = ref(0);
     let currentIndex = ref(undefined);
+
+    const windowWidth = ref(window.innerWidth);
+    const previousWindowWidth = ref(window.innerWidth);
+
+    const handleResize = () => {
+      previousWindowWidth.value = windowWidth.value;
+      windowWidth.value = window.innerWidth;
+      console.log('視窗大小 8 8 8')
+
+
+      if ((previousWindowWidth.value <= 767 && windowWidth.value > 767) ||
+        (previousWindowWidth.value > 767 && windowWidth.value <= 767)) {
+        console.log('視窗大小改變');
+      }
+    };
+
+    const isLargeScreen = ref(window.innerWidth > 767);
+    const updateScreenSize = () => {
+      isLargeScreen.value = window.innerWidth > 767;
+    };
+
 
     const playMusic = (index, speed = 1) => {
       audio.playbackRate = speed;
@@ -127,6 +147,16 @@ const app = createApp({
       }
     };
 
+    onMounted(() => {
+      window.addEventListener('resize', updateScreenSize);
+      window.addEventListener('resize', handleResize);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', updateScreenSize);
+      window.removeEventListener('resize', handleResize);
+    });
+
 
 
     return {
@@ -138,6 +168,9 @@ const app = createApp({
       isRepeating,
       isShuffling,
       progress,
+      isLargeScreen,
+      windowWidth,
+      previousWindowWidth,
       playMusic,
       prevMusic,
       nextMusic,
@@ -145,7 +178,9 @@ const app = createApp({
       seekMusic,
       playNextOrStop,
       repeatMusic,
-      shuffleMusic
+      shuffleMusic,
+      updateScreenSize,
+      handleResize
     };
   }
 }).mount('#app');

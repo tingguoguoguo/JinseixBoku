@@ -55,24 +55,26 @@ class Vec2 {
 const player = document.querySelector('audio')
 player.volume = 0.3
 
-// Canvas 初始化
-const canvas = document.querySelector('#canvas')
-const ctx = canvas.getContext('2d')
-
-// 繪製圓形
-ctx.circle = function (v, r) {
-  ctx.arc(v.x, v.y, r, 0, Math.PI * 2)
-}
-
-// 繪製線條
-ctx.line = function (v1, v2) {
-  ctx.moveTo(v1.x, v1.y)
-  ctx.lineTo(v2.x, v2.y)
-}
+let canvas;
+let ctx;
 
 function initCanvas() {
+  // Canvas 初始化
+  canvas = document.querySelector('#canvas')
+  ctx = canvas.getContext('2d')
   ww = canvas.width = 420
   wh = canvas.height = 420
+  // 繪製圓形
+  ctx.circle = function (v, r) {
+    ctx.arc(v.x, v.y, r, 0, Math.PI * 2)
+  }
+
+  // 繪製線條
+  ctx.line = function (v1, v2) {
+    ctx.moveTo(v1.x, v1.y)
+    ctx.lineTo(v2.x, v2.y)
+  }
+
 }
 
 initCanvas()

@@ -1,0 +1,76 @@
+.album__mobile {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-30%, -50%);
+  width: 500px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #7e7d7d;
+}
+
+.album__cover {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background-image: url('/albumcover.jpg');
+  background-size: cover;
+  box-shadow: -10px 10px 10px rgba(0, 0, 0);
+
+}
+
+.canvas__zoom {
+  position: relative;
+  left: 190px;
+  transform: scale(0.8);
+  z-index: -1;
+}
+
+.player__zoom {
+  background-color: #ffffff;
+  width: 550px;
+  height: 550px;
+  position: fixed;
+  left: -50%;
+  top: -25px;
+  z-index: -1;
+  display: flex;
+  align-items: center;
+}
+
+#player__mobile {
+  width: 52%;
+  background-color: #ffffff;
+  padding: 28px;
+  font-family: "Patua One", serif;
+}
+
+#player__info__mobile {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #000000;
+}
+
+#player__knob__mobile {
+  width: 100%;
+  height: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+#player__control__mobile {
+  display: flex;
+  justify-content: space-between;
+}
+
+#player__control__mobile div {
+  cursor: pointer;
+}
+
+#player__control__mobile i {
+  font-size: 20px;
+}

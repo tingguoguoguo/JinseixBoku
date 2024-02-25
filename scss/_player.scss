@@ -71,6 +71,27 @@
     height: 75px;
   }
 
+  @include md {
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      border-radius: 5px;
+      background: #b9b9b9;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #d33636;
+      border: #e0e0e0 solid 1px;
+      cursor: pointer;
+    }
+  }
+
 }
 
 

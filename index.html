@@ -22,84 +22,127 @@
 </head>
 
 <body>
-  <!-- 作畫區域 -->
-  <div class="eye">
-
-    <!-- 圓眼球區域 -->
-    <div class="eye__base"></div>
-    <div class="eye__ball">
-      <canvas id="canvas"></canvas>
-      <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
-      <audio loop></audio>
-    </div>
-
-    <!-- 眼眶區域 -->
-    <div class=" eye__lid">
-      <div class="eye__lid__mask"></div>
-      <div class="eye__lashes"></div>
-    </div>
-
-  </div>
-
-  <!-- one o'clock -->
-  <div id="oneoclock">
-    <p class="text">ONE O'C</p>
-    <div class="l">
-      <span></span>
-    </div>
-    <p class="text">OCK</p>
-  </div>
-  <div id="album">
-    <p>人生 x 僕 ═ </p>
-  </div>
-
-  <!-- vue 建立playlist & player & 速度控制面板 -->
+  <!-- 大尺寸 -------------------------------------------------------->
   <div id="app">
-    <div id="playlist">
-      <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)"
-        :class="{ 'text-red-500': currentSong === song }">
-        <p>{{song.name}}</p>
+    <div id="big__size" v-if="isLargeScreen">
+      <!-- 作畫區域 -->
+      <div class="eye">
+        <!-- 圓眼球區域 -->
+        <div class="eye__base"></div>
+        <div class="eye__ball">
+          <canvas id="canvas"></canvas>
+          <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
+          <audio loop></audio>
+        </div>
+
+        <!-- 眼眶區域 -->
+        <div class=" eye__lid">
+          <div class="eye__lid__mask"></div>
+          <div class="eye__lashes"></div>
+        </div>
+
+      </div>
+
+      <!-- one o'clock -->
+      <div id="oneoclock">
+        <p class="text">ONE O'C</p>
+        <div class="l">
+          <span></span>
+        </div>
+        <p class="text">OCK</p>
+      </div>
+      <div id="album">
+        <p>人生 x 僕 ═ </p>
+      </div>
+
+      <!-- vue 建立playlist & player & 速度控制面板 -->
+      <div id="playlist">
+        <div v-for="(song, index) in songs" :key="index" @click="playMusic(index)"
+          :class="{ 'text-red-500': currentSong === song }">
+          <p>{{song.name}}</p>
+        </div>
+      </div>
+
+      <div id="player">
+        <div id="player__info">
+          <p>{{currentSong.name}}</p>
+        </div>
+        <!-- <progress id="player__progress" max="100" :value="progress"></progress> -->
+        <input type="range" id="player__knob" :value="progress" @input="seekMusic" step="0.01">
+        <div id="player__control">
+          <div id="player__control__repeat" @click="repeatMusic">
+            <i :class="['fa-solid fa-repeat', { 'text-red-500': isRepeating }]"></i>
+          </div>
+          <div id="player__control__prev" @click="prevMusic">
+            <i class="fa-solid fa-backward-fast"></i>
+          </div>
+          <div id="player__control__play" @click="playMusic(currentIndex, 1)">
+            <i class="fa-solid fa-play" v-if="!isPlaying"></i>
+            <i class="fa-solid fa-pause" v-else></i>
+          </div>
+          <div id="player__control__next" @click="nextMusic">
+            <i class="fa-solid fa-forward-fast"></i>
+          </div>
+          <div id="player__control__shuffle" @click="shuffleMusic">
+            <i :class="['fa-solid fa-shuffle', { 'text-red-500': isShuffling }]"></i>
+          </div>
+        </div>
+      </div>
+
+      <div id="controls__speed">
+        <button @click="playMusic(currentIndex, 0.75)">0.75x</button>
+        <button @click="playMusic(currentIndex, 1)">1x</button>
+        <button @click="playMusic(currentIndex, 1.25)">1.25x</button>
       </div>
     </div>
-
-    <div id="player">
-      <div id="player__info">
-        <p>{{currentSong.name}}</p>
+    <!-- 小尺寸 ----------------------------------------------------------->
+    <div id="small__size" v-else>
+      <!-- 作畫區域 -->
+      <div class="album__mobile">
+        <!-- 專輯封面 -->
+        <div class="album__cover"></div>
+        <!-- canvas區塊 -->
+        <div class="canvas__zoom">
+          <canvas id="canvas"></canvas>
+          <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
+          <audio loop></audio>
+        </div>
+        <!-- vue播放器區塊 -->
+        <div class="player__zoom">
+          <div id="player__mobile">
+            <div id="player__info__mobile">
+              <p>{{currentSong.name}}</p>
+            </div>
+            <!-- <progress id="player__progress" max="100" :value="progress"></progress> -->
+            <input type="range" id="player__knob__mobile" :value="progress" @input="seekMusic" step="0.01">
+            <div id="player__control__mobile">
+              <div id="player__control__repeat" @click="repeatMusic">
+                <i :class="['fa-solid fa-repeat', { 'text-red-500': isRepeating }]"></i>
+              </div>
+              <div id="player__control__prev" @click="prevMusic">
+                <i class="fa-solid fa-backward-fast"></i>
+              </div>
+              <div id="player__control__play" @click="playMusic(currentIndex, 1)">
+                <i class="fa-solid fa-play" v-if="!isPlaying"></i>
+                <i class="fa-solid fa-pause" v-else></i>
+              </div>
+              <div id="player__control__next" @click="nextMusic">
+                <i class="fa-solid fa-forward-fast"></i>
+              </div>
+              <div id="player__control__shuffle" @click="shuffleMusic">
+                <i :class="['fa-solid fa-shuffle', { 'text-red-500': isShuffling }]"></i>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <!-- <progress id="player__progress" max="100" :value="progress"></progress> -->
-      <input type="range" id="player__knob" :value="progress" @input="seekMusic" step="0.01">
-      <div id="player__control">
-        <div id="player__control__repeat" @click="repeatMusic">
-          <i :class="['fa-solid fa-repeat', { 'text-red-500': isRepeating }]"></i>
-        </div>
-        <div id="player__control__prev" @click="prevMusic">
-          <i class="fa-solid fa-backward-fast"></i>
-        </div>
-        <div id="player__control__play" @click="playMusic(currentIndex, 1)">
-          <i class="fa-solid fa-play" v-if="!isPlaying"></i>
-          <i class="fa-solid fa-pause" v-else></i>
-        </div>
-        <div id="player__control__next" @click="nextMusic">
-          <i class="fa-solid fa-forward-fast"></i>
-        </div>
-        <div id="player__control__shuffle" @click="shuffleMusic">
-          <i :class="['fa-solid fa-shuffle', { 'text-red-500': isShuffling }]"></i>
-        </div>
-      </div>
-    </div>
-
-    <div id="controls__speed">
-      <button @click="playMusic(currentIndex, 0.75)">0.75x</button>
-      <button @click="playMusic(currentIndex, 1)">1x</button>
-      <button @click="playMusic(currentIndex, 1.25)">1.25x</button>
     </div>
   </div>
-
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.global.min.js'></script> <!-- vue -->
   <script src="./js/bootstrap.bundle.js"></script> <!-- bootstrap -->
-  <script src='./js/eyes.js'></script> <!-- 眨眼.js -->
-  <script src="./js/cd.js"></script> <!-- 唱盤繪畫.js -->
   <script src="./js/player.js"></script> <!-- vue player.js -->
+  <script src='./js/eyes.js'></script> <!-- 眨眼.js -->       
+  <script src="./js/cd.js"></script> <!-- 唱盤繪畫.js -->
 </body>
 
 </html>

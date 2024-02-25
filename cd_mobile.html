@@ -133,18 +133,17 @@
 
 <body>
   <!-- 作畫區域 -->
-
-  <div class="album__mobile">
-    <!-- 專輯封面 -->
-    <div class="album__cover"></div>
-    <!-- canvas區塊 -->
-    <div class="canvas__zoom">
-      <canvas id="canvas"></canvas>
-      <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
-      <audio loop></audio>
-    </div>
-    <!-- vue播放器區塊 -->
-    <div id="app">
+  <div id="app">
+    <div class="album__mobile">
+      <!-- 專輯封面 -->
+      <div class="album__cover"></div>
+      <!-- canvas區塊 -->
+      <div class="canvas__zoom">
+        <canvas id="canvas"></canvas>
+        <img src='https://m.media-amazon.com/images/I/818qSkMfKzL._UF1000,1000_QL80_.jpg' style="display: none;">
+        <audio loop></audio>
+      </div>
+      <!-- vue播放器區塊 -->
       <div class="player__zoom">
         <div id="player__mobile">
           <div id="player__info__mobile">
@@ -177,8 +176,8 @@
 
   <!-- script -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.global.min.js'></script> <!-- vue -->
-  <script src="./js/cd.js"></script> <!-- 唱盤繪畫.js -->
   <script src="./js/player.js"></script>
+  <script src="./js/cd.js"></script> <!-- 唱盤繪畫.js -->
 
 </body>
 
