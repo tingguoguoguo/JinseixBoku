@@ -42,6 +42,67 @@
   display: flex;
   align-items: center;
   transform: scale(0.5);
+
+  #album__text__mobile {
+    user-select: none;
+    color: #fff;
+    width: 200px;
+    height: 70px;
+    padding: 4px;
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    font-size: 32px;
+    font-family: "Shippori Antique", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+
+    &:hover {
+      transform: translate(12px, 12px);
+      color: #000000;
+
+      &::before {
+        background: #d33636;
+      }
+
+      &::after {
+        transform: translate(-12px, -12px);
+        background-color: #000000;
+      }
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      display: block;
+      width: 200px;
+      height: 70px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: all 0.3s;
+    }
+
+    &::before {
+      background-color: #000000;
+      z-index: -1;
+      transform: translate(0, 0);
+    }
+
+    &::after {
+      background-color: #d33636;
+      z-index: -2;
+      transform: translate(12px, 12px);
+    }
+
+
+
+    p {
+      margin: 0;
+    }
+  }
 }
 
 #player__mobile {

@@ -48,5 +48,6 @@ function smallAlbum() {
     playerZoom.style.transition = 'left 0.3s ease-in-out';
   })
 }
+
 smallAlbum();
-window.addEventListener('resize', smallAlbum)
+window.addEventListener('resize', smallAlbum);

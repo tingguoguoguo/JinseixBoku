@@ -491,6 +491,70 @@ body {
   -webkit-transform: scale(0.5);
           transform: scale(0.5);
 }
+.player__zoom #album__text__mobile {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  color: #fff;
+  width: 200px;
+  height: 70px;
+  padding: 4px;
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  font-size: 32px;
+  font-family: "Shippori Antique", sans-serif;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  z-index: 3;
+}
+.player__zoom #album__text__mobile:hover {
+  -webkit-transform: translate(12px, 12px);
+          transform: translate(12px, 12px);
+  color: #000000;
+}
+.player__zoom #album__text__mobile:hover::before {
+  background: #d33636;
+}
+.player__zoom #album__text__mobile:hover::after {
+  -webkit-transform: translate(-12px, -12px);
+          transform: translate(-12px, -12px);
+  background-color: #000000;
+}
+.player__zoom #album__text__mobile::before, .player__zoom #album__text__mobile::after {
+  content: "";
+  display: block;
+  width: 200px;
+  height: 70px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.player__zoom #album__text__mobile::before {
+  background-color: #000000;
+  z-index: -1;
+  -webkit-transform: translate(0, 0);
+          transform: translate(0, 0);
+}
+.player__zoom #album__text__mobile::after {
+  background-color: #d33636;
+  z-index: -2;
+  -webkit-transform: translate(12px, 12px);
+          transform: translate(12px, 12px);
+}
+.player__zoom #album__text__mobile p {
+  margin: 0;
+}
 
 #player__mobile {
   width: 52%;
