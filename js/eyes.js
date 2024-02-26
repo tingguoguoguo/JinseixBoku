@@ -28,7 +28,25 @@ function initEye() {
   setInterval(() => {
     closeEye();
     // 0.5 秒後再開眼
-    setTimeout(openEye, 500);
-  }, 4800);
+    setTimeout(openEye, 200);
+  }, 4000);
 }
 initEye();
+
+/* 小尺寸的CD冒出 */
+function smallAlbum() {
+  const albumCover = document.querySelector('.album__cover');
+  const canvasZoom = document.querySelector('.canvas__zoom');
+  const playerZoom = document.querySelector('.player__zoom');
+
+  albumCover.addEventListener('mouseenter', function () {
+    canvasZoom.style.left = '190px';
+    canvasZoom.style.transition = 'left 0.3s ease-in-out';
+    playerZoom.style.transform = 'scale(1)';
+    playerZoom.style.left = '-50%';
+    playerZoom.style.transition = 'transform 0.3s ease-in-out';
+    playerZoom.style.transition = 'left 0.3s ease-in-out';
+  })
+}
+smallAlbum();
+window.addEventListener('resize', smallAlbum)

@@ -8,6 +8,17 @@
 body {
   background-color: rgb(0, 0, 0);
   overflow: hidden;
+
+  @include md {
+    background-color: #e6e3e3;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .eye {
