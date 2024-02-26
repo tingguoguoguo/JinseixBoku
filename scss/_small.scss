@@ -20,7 +20,7 @@
   height: 400px;
   background-image: url('https://gcs.rimg.com.tw/g2/9/c7/92/21908903051154_928.jpg');
   background-size: cover;
-  box-shadow: -10px 10px 10px rgba(0, 0, 0);
+  box-shadow: -15px 15px 20px rgba(0, 0, 0, 0.5);
 
 }
 
@@ -42,6 +42,7 @@
   display: flex;
   align-items: center;
   transform: scale(0.5);
+
 
   #album__text__mobile {
     user-select: none;

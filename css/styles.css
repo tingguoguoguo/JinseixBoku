@@ -462,8 +462,8 @@ body {
   height: 400px;
   background-image: url("https://gcs.rimg.com.tw/g2/9/c7/92/21908903051154_928.jpg");
   background-size: cover;
-  -webkit-box-shadow: -10px 10px 10px rgb(0, 0, 0);
-          box-shadow: -10px 10px 10px rgb(0, 0, 0);
+  -webkit-box-shadow: -15px 15px 20px rgba(0, 0, 0, 0.5);
+          box-shadow: -15px 15px 20px rgba(0, 0, 0, 0.5);
 }
 
 .canvas__zoom {
