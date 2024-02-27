@@ -53,7 +53,7 @@ class Vec2 {
 
 
 const player = document.querySelector('audio')
-player.volume = 0.3
+player.volume = 0.5
 
 let canvas;
 let ctx;
@@ -165,7 +165,7 @@ var cd = null
 // 初始化CD
 function init() {
   cd = new CD({
-    angleSpeed: 0
+    angleSpeed: 1
   })
 }
 
@@ -173,21 +173,21 @@ function init() {
 function update() {
   time++
   cd.update()
-  // if (mousePosDown) {
-  //   if (!cd.lastAngle) {
-  //     cd.lastAngle = cd.angle
-  //   }
-  //   cd.dragging = true
+  if (mousePosDown) {
+    if (!cd.lastAngle) {
+      cd.lastAngle = cd.angle
+    }
+    cd.dragging = true
 
-  //   let delta =
-  //     mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
-  //     mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
-  //   cd.angle = cd.lastAngle + delta
-  //   cd.angleSpeed = delta
-  // } else {
-  //   cd.dragging = false
-  //   cd.lastAngle = null
-  // }
+    let delta =
+      mousePos.sub(new Vec2(ww / 2, wh / 2)).angle -
+      mousePosDown.sub(new Vec2(ww / 2, wh / 2)).angle
+    cd.angle = cd.lastAngle + delta
+    cd.angleSpeed = delta
+  } else {
+    cd.dragging = false
+    cd.lastAngle = null
+  }
 
   // //音樂播放速度控制
   let cur = Math.abs(cd.angleSpeed)
@@ -233,29 +233,29 @@ window.addEventListener('load', loaded)
 window.addEventListener('resize', initCanvas)
 
 // 滑鼠事件跟紀錄
-// const mousePos = new Vec2(0, 0)
-// let mousePosDown = null
-// let mousePosUp = null
+const mousePos = new Vec2(0, 0)
+let mousePosDown = null
+let mousePosUp = null
 
-// window.addEventListener('mousemove', mousemove)
-// window.addEventListener('mouseup', mouseup)
-// window.addEventListener('mousedown', mousedown)
+window.addEventListener('mousemove', mousemove)
+window.addEventListener('mouseup', mouseup)
+window.addEventListener('mousedown', mousedown)
 
-// function mousemove(e) {
-//   mousePos.set(e.x, e.y)
-// }
+function mousemove(e) {
+  mousePos.set(e.x, e.y)
+}
 
 
 
-// function mouseup(e) {
-//   mousePos.set(e.x, e.y)
-//   mousePosUp = mousePos.clone()
-//   mousePosDown = null
-// }
+function mouseup(e) {
+  mousePos.set(e.x, e.y)
+  mousePosUp = mousePos.clone()
+  mousePosDown = null
+}
 
-// function mousedown(e) {
-//   mousePos.set(e.x, e.y)
-//   mousePosDown = mousePos.clone()
-//   player.play()
-//   cd.friction = 0.99
-// }
+function mousedown(e) {
+  mousePos.set(e.x, e.y)
+  mousePosDown = mousePos.clone()
+  player.play()
+  cd.friction = 0.99
+}
