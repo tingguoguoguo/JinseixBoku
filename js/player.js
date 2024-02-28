@@ -50,6 +50,7 @@ const app = createApp({
     const isShuffling = ref(false);
     const progress = ref(0);
     let currentIndex = ref(undefined);
+    let ignoreMouseEvents = false;
 
     const isLargeScreen = ref(window.innerWidth > 767);
     const updateScreenSize = () => {
@@ -63,6 +64,7 @@ const app = createApp({
       cd.friction = 1
       // 如果 index 為 undefined 或者 index 不等於 currentIndex.value，則播放歌曲
       if (index === undefined || index !== currentIndex.value) {
+        ignoreMouseEvents = true;
         currentIndex.value = index !== undefined ? index : 0; // 如果 index 為 undefined，播放第一首歌
         currentSong.value = songs.value[currentIndex.value];
         audio.src = currentSong.value.src;
@@ -70,6 +72,7 @@ const app = createApp({
           audio.playbackRate = speed;
           progress.value = 0;
           audio.play();
+          ignoreMouseEvents = true;
           isPlaying.value = true;
           cd.angleSpeed = 1
           cd.friction = 1
@@ -77,9 +80,11 @@ const app = createApp({
         }, { once: true });
       } else {
         if (audio.paused) {
+          ignoreMouseEvents = true;
           audio.play();
           isPlaying.value = true;
         } else {
+          ignoreMouseEvents = false;
           audio.pause();
           isPlaying.value = false;
           cd.angleSpeed = 0
@@ -139,6 +144,35 @@ const app = createApp({
       window.removeEventListener('resize', updateScreenSize);
     });
 
+    function mousemove(e) {
+      if (!ignoreMouseEvents) {
+        mousePos.set(e.x, e.y);
+      }
+    }
+
+
+
+    function mouseup(e) {
+      if (!ignoreMouseEvents) {
+        mousePos.set(e.x, e.y);
+        mousePosUp = mousePos.clone();
+        mousePosDown = null;
+      }
+    }
+
+    function mousedown(e) {
+      if (!ignoreMouseEvents) {
+        mousePos.set(e.x, e.y);
+        mousePosDown = mousePos.clone();
+        player.play();
+        cd.friction = 0.99;
+      }
+    }
+
+    window.addEventListener('mousemove', mousemove)
+    window.addEventListener('mouseup', mouseup)
+    window.addEventListener('mousedown', mousedown)
+
 
 
     return {
@@ -151,6 +185,7 @@ const app = createApp({
       isShuffling,
       progress,
       isLargeScreen,
+      ignoreMouseEvents,
       playMusic,
       prevMusic,
       nextMusic,
@@ -160,6 +195,9 @@ const app = createApp({
       repeatMusic,
       shuffleMusic,
       updateScreenSize,
+      mousemove,
+      mouseup,
+      mousedown
     };
   }
 }).mount('#app');
